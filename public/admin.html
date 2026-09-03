@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — Bengaluru Friends Cricket Club</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="assets/logo.jpg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="admin-page">
+
+<!-- ======= LOGIN VIEW ======= -->
+<div class="admin-login-wrap" id="loginView">
+  <div class="admin-login-card">
+    <img src="assets/logo.jpg" alt="Bengaluru Friends Cricket Club logo" />
+    <h1>Admin Login</h1>
+    <p>Sign in to manage the club's photo gallery.</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required autocomplete="username" />
+      </div>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Log In</button>
+      <div class="form-message" id="loginMessage"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ======= DASHBOARD VIEW ======= -->
+<div id="dashboardView" style="display:none;">
+
+  <div class="admin-bar">
+    <div class="container">
+      <div class="admin-bar-brand">
+        <img src="assets/logo.jpg" alt="Bengaluru Friends Cricket Club logo" />
+        <div>
+          <div style="color:var(--white); font-weight:600; font-size:0.95rem;">Gallery Management</div>
+          <span id="adminEmailLabel">Signed in</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:12px;">
+        <a href="index.html" class="btn btn-outline">View Site</a>
+        <button class="btn btn-outline" id="logoutBtn">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-main">
+    <div class="container">
+
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <div class="num" id="statTotal">0</div>
+          <div class="label">Total Photos</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="num" id="statPages">0</div>
+          <div class="label">Gallery Pages</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="num" id="statLatest">—</div>
+          <div class="label">Last Upload</div>
+        </div>
+      </div>
+
+      <div class="section-kicker">Upload</div>
+      <h2 class="section-heading" style="font-size:2rem; margin-bottom:22px;">Add Photographs</h2>
+
+      <form id="uploadForm">
+        <div class="dropzone" id="dropzone">
+          <h3>Drag &amp; drop photos here</h3>
+          <p>or click to browse — JPG, PNG or WEBP, up to 12MB each, 40 photos at a time</p>
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple />
+        </div>
+
+        <div class="preview-grid" id="previewGrid"></div>
+
+        <div class="upload-progress-wrap" id="progressWrap">
+          <div class="upload-progress-bar"><div class="upload-progress-bar-fill" id="progressFill"></div></div>
+          <div class="upload-progress-text" id="progressText">Uploading…</div>
+        </div>
+
+        <div style="margin-top:22px; display:flex; gap:14px;">
+          <button type="submit" class="btn btn-primary" id="uploadBtn" disabled>Upload Photos</button>
+          <button type="button" class="btn btn-dark" id="clearBtn" style="display:none;">Clear Selection</button>
+        </div>
+      </form>
+
+      <div class="admin-section-title">
+        <h2 class="section-heading" style="font-size:1.8rem;">Existing Photos</h2>
+        <div class="admin-search">
+          <input type="text" id="adminSearch" placeholder="Filter by filename…" />
+        </div>
+      </div>
+
+      <div id="adminGalleryGrid" class="admin-gallery-grid"></div>
+      <div id="adminGalleryEmpty" class="gallery-empty-state" style="display:none;">No photos uploaded yet.</div>
+
+      <div id="adminPagination" class="pagination"></div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>
