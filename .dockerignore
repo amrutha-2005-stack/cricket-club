@@ -1,0 +1,9 @@
+node_modules
+.next
+.env
+.git
+.gitignore
+public/uploads/*
+!public/uploads/.gitkeep
+README.md
+DEPLOYMENT.md

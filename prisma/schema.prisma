@@ -1,0 +1,282 @@
+// Bengaluru Friends Cricket Club — Prisma schema
+// PostgreSQL. Run `npm run prisma:migrate` after editing this file.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Auth ----------
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ---------- Site-wide settings (singleton row, id = "singleton") ----------
+
+model SiteSettings {
+  id                 String   @id @default("singleton")
+  siteTitle          String   @default("Bengaluru Friends | Since 1994")
+  metaDescription    String   @default("Bengaluru Friends – A cricket and sports association with a rich journey since 1994.")
+  tagline            String?  @default("A cricket and sports association built on friendship, since 1994.")
+  topBarTagline      String?
+  bannerQuote        String?
+  foundedYear         Int      @default(1994)
+  totalTournaments   Int?
+  totalChampionships Int?
+  aboutText          String?  @db.Text
+  missionText        String?  @db.Text
+  communityText      String?  @db.Text
+  address            String?
+  phone              String?
+  email              String?
+  mapUrl             String?
+  updatedAt          DateTime @updatedAt
+}
+
+// ---------- Founders / Leadership (CMS-driven, not hardcoded) ----------
+
+model Founder {
+  id          String   @id @default(cuid())
+  name        String
+  designation String
+  bio         String?  @db.Text
+  message     String?  @db.Text
+  photoUrl    String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ---------- Achievements ----------
+
+model Achievement {
+  id             String   @id @default(cuid())
+  title          String
+  description    String?  @db.Text
+  year           Int?
+  tournamentName String?
+  trophyImageUrl String?
+  teamPhotoUrl   String?
+  videoUrl       String?
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ---------- Tournaments organized ----------
+
+enum TournamentStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+}
+
+model Tournament {
+  id            String            @id @default(cuid())
+  name          String
+  year          Int?
+  location      String?
+  description   String?           @db.Text
+  winner        String?
+  runnerUp      String?
+  numberOfTeams Int?
+  posterUrl     String?
+  date          DateTime?
+  status        TournamentStatus  @default(COMPLETED)
+  order         Int               @default(0)
+  photos        TournamentPhoto[]
+  videos        Video[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model TournamentPhoto {
+  id           String     @id @default(cuid())
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  url          String
+  caption      String?
+  order        Int        @default(0)
+  createdAt    DateTime   @default(now())
+}
+
+// ---------- Sri Lanka / historic story (CMS-editable, source-attributed) ----------
+
+model HistoricalStory {
+  id                String                 @id @default(cuid())
+  title             String                 @default("A Historic Chapter")
+  story             String                 @db.Text
+  year              Int?
+  caption           String?
+  additionalNotes   String?                @db.Text
+  videoUrl          String?
+  order             Int                    @default(0)
+  images            HistoricalStoryImage[]
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+}
+
+enum HistoricalImageType {
+  PHOTO
+  DOCUMENT
+}
+
+model HistoricalStoryImage {
+  id        String              @id @default(cuid())
+  storyId   String
+  story     HistoricalStory     @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  url       String
+  caption   String?
+  type      HistoricalImageType @default(PHOTO)
+  order     Int                 @default(0)
+  createdAt DateTime            @default(now())
+}
+
+// ---------- Winner gallery (albums + images) ----------
+
+model GalleryAlbum {
+  id             String        @id @default(cuid())
+  title          String
+  tournamentName String?
+  year           Int?
+  description    String?       @db.Text
+  order          Int           @default(0)
+  images         GalleryImage[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model GalleryImage {
+  id        String       @id @default(cuid())
+  albumId   String
+  album     GalleryAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?
+  caption   String?
+  order     Int          @default(0)
+  createdAt DateTime     @default(now())
+}
+
+// ---------- Videos ----------
+
+model Video {
+  id             String      @id @default(cuid())
+  title          String
+  youtubeUrl     String
+  description    String?     @db.Text
+  thumbnailUrl   String?
+  year           Int?
+  tournamentName String?
+  category       String?
+  order          Int         @default(0)
+  tournamentId   String?
+  tournament     Tournament? @relation(fields: [tournamentId], references: [id], onDelete: SetNull)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+// ---------- Former players ("Legends") ----------
+
+model FormerPlayer {
+  id            String   @id @default(cuid())
+  name          String
+  photoUrl      String?
+  playingYears  String?
+  role          String?
+  bio           String?  @db.Text
+  achievements  String?  @db.Text
+  jerseyNumber  Int?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ---------- Current squad ----------
+
+model CurrentPlayer {
+  id           String   @id @default(cuid())
+  name         String
+  photoUrl     String?
+  jerseyNumber Int?
+  role         String?
+  battingStyle String?
+  bowlingStyle String?
+  bio          String?  @db.Text
+  socialLink   String?
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ---------- Social links ----------
+
+enum SocialPlatform {
+  INSTAGRAM
+  FACEBOOK
+  YOUTUBE
+  WHATSAPP
+}
+
+model SocialLink {
+  id       String         @id @default(cuid())
+  platform SocialPlatform @unique
+  url      String
+}
+
+// ---------- Contact form submissions ----------
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+}
+
+// ---------- Upcoming events (homepage "Upcoming Events" list) ----------
+
+model EventItem {
+  id        String   @id @default(cuid())
+  title     String
+  location  String?
+  eventDate DateTime
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------- News posts (homepage "Latest News" list) ----------
+
+model NewsPost {
+  id          String   @id @default(cuid())
+  title       String
+  summary     String?  @db.Text
+  imageUrl    String?
+  publishedAt DateTime @default(now())
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ---------- Generic media library (audit trail of every upload) ----------
+
+model Media {
+  id        String   @id @default(cuid())
+  url       String
+  filename  String
+  mimeType  String
+  size      Int
+  altText   String?
+  caption   String?
+  createdAt DateTime @default(now())
+}

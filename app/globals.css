@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy-950: #050914;
+  --navy-900: #0a0f1f;
+  --gold: #e50914;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #f4f5f7;
+  color: #0a0f1f;
+}
+
+.font-kannada {
+  font-family: "Noto Sans Kannada", sans-serif;
+}
+
+.text-shadow-sm {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: reveal-in 0.8s ease-out forwards;
+}
+
+@keyframes reveal-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
